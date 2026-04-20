@@ -1,0 +1,2 @@
+1. mengintegrasikan ui dari TiketProduksi.jsx dengan UserDashboard.jsx menjadi satu agar serasi dan tidak berbeda, serta terlihat berseragam(tidak berbeda warna/font/style).
+2. mengubah header menjadi salah satu bagian dari components agar dapat digunakan berulang kali di halaman lain yang menggunakan header yang sama(reusable components).

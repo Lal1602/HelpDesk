@@ -1,0 +1,300 @@
+.tiket-produksi-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    background-color: #f5f6fa;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.tiket-produksi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 24px 32px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eff3f6;
+}
+
+.tiket-produksi-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tiket-produksi-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.tiket-produksi-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.breadcrumb-active {
+    color: #0d9e8a;
+    font-weight: 700;
+}
+
+.breadcrumb-separator {
+    color: #d1d5db;
+}
+
+.tiket-produksi-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.search-wrapper {
+    position: relative;
+    min-width: 260px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.search-input {
+    width: 100%;
+    border: 1px solid #d9e8ef;
+    border-radius: 999px;
+    padding: 12px 16px 12px 42px;
+    background-color: #f8fbff;
+    color: #1e293b;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    border-color: #0d9e8a;
+    box-shadow: 0 0 0 4px rgba(13, 158, 138, 0.08);
+}
+
+.new-ticket-btn {
+    border: none;
+    outline: none;
+    background-color: #0d9e8a;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(13, 158, 138, 0.18);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.new-ticket-btn:hover {
+    transform: translateY(-1px);
+    background-color: #0b8a78;
+}
+
+.tiket-produksi-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 32px 32px;
+    gap: 20px;
+}
+
+.filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    min-height: 48px;
+}
+
+.filter-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filter-pill {
+    border: none;
+    outline: none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background-color: #ffffff;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    transition: all 0.2s;
+}
+
+.filter-pill.active,
+.filter-pill:hover {
+    background-color: #0d9e8a;
+    color: #ffffff;
+}
+
+.tiket-table-card {
+    width: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    background-color: #ffffff;
+}
+
+.tiket-table-wrapper {
+    overflow-x: auto;
+}
+
+.tiket-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 920px;
+}
+
+.tiket-table thead {
+    background-color: #f8fbff;
+}
+
+.tiket-table th,
+.tiket-table td {
+    text-align: left;
+    padding: 22px 24px;
+    border-bottom: 1px solid #eff3f6;
+    vertical-align: middle;
+}
+
+.tiket-table th {
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.tiket-table tbody tr {
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.tiket-table tbody tr:hover {
+    background-color: #f8fbff;
+    transform: translateY(-1px);
+}
+
+.ticket-cell-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+}
+
+.ticket-cell-meta {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.category-chip,
+.priority-chip,
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.category-chip {
+    background: #f3f8ff;
+    color: #0d6fd7;
+}
+
+.priority-chip.high {
+    color: #d92d20;
+    background: rgba(217, 45, 32, 0.1);
+}
+
+.priority-chip.medium {
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.1);
+}
+
+.priority-chip.low {
+    color: #15803d;
+    background: rgba(21, 128, 61, 0.1);
+}
+
+.status-chip.in-progress {
+    color: #0d9e8a;
+    background: rgba(13, 158, 138, 0.1);
+}
+
+.status-chip.pending {
+    color: #d97706;
+    background: rgba(249, 205, 16, 0.12);
+}
+
+.status-chip.resolved {
+    color: #15803d;
+    background: rgba(16, 185, 129, 0.12);
+}
+
+.due-text {
+    color: #1f2937;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+    .tiket-produksi-header,
+    .tiket-produksi-panel {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+@media (max-width: 860px) {
+    .tiket-produksi-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tiket-produksi-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 680px) {
+    .tiket-produksi-header {
+        padding: 18px 16px;
+    }
+
+    .tiket-produksi-panel {
+        padding: 18px 16px 24px;
+    }
+
+    .search-wrapper {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .new-ticket-btn {
+        width: 100%;
+    }
+}

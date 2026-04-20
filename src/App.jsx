@@ -4,6 +4,7 @@ import LandingPage from './screens/LandingPage';
 import LoginPage from './screens/LoginPage';
 import AdminPage from './screens/AdminPage';
 import UserDashboard from './screens/UserDashboard';
+import TiketProduksi from './screens/TiketProduksi';
 import ProfilePage from './screens/ProfilePage';
 
 function AppContent() {
@@ -38,6 +39,10 @@ function AppContent() {
       <Route
         path="/dashboard"
         element={<UserDashboard user={user} onLogout={() => { setUser(null); navigate('/'); }} />}
+      />
+      <Route
+        path="/tiket-produksi"
+        element={<TiketProduksi />}
       />
       <Route
         path="/profile"
