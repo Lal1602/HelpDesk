@@ -1,4 +1,4 @@
-export default function AdminPage({ onLogout }) {
+export default function AdminPage({ user, onLogout }) {
     return (
         <div style={styles.container}>
             <nav style={styles.navbar}>
@@ -10,7 +10,7 @@ export default function AdminPage({ onLogout }) {
 
             <main style={styles.main}>
                 <div style={styles.welcomeCard}>
-                    <h1 style={styles.title}>Selamat Datang, Admin!</h1>
+                    <h1 style={styles.title}>Selamat Datang, {user?.email || "Admin"}!</h1>
                     <p style={styles.subtitle}>
                         Ini adalah tampilan dashboard dummy menggunakan pola StyleSheet ala React Native.
                     </p>

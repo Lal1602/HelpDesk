@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function LoginPage() {
+export default function LoginPage({ onLogin }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailFocused, setEmailFocused] = useState(false);
@@ -11,7 +11,21 @@ export default function LoginPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Login:", { email, password });
+        
+        // Data dummy untuk keperluan testing
+        const dummyUsers = [
+            { email: "admin@gmail.com", password: "admin123", role: "admin" },
+            { email: "user@gmail.com", password: "user123", role: "user" }
+        ];
+
+        const user = dummyUsers.find(u => u.email === email && u.password === password);
+
+        if (user) {
+            console.log("Login Success:", user);
+            onLogin(user);
+        } else {
+            alert("Email atau password salah! \n\nHint:\nAdmin: admin@gmail.com / admin123\nUser: user@gmail.com / user123");
+        }
     };
 
     return (
