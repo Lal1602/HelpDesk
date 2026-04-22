@@ -85,7 +85,7 @@ export default function UserDashboard({ user, onLogout }) {
             <Sidebar />
             
             <div className="dashboard-main">
-                <Navbar />
+                <Navbar user={user} onLogout={onLogout}/>
 
                 {/* Dashboard Content */}
                 <div className="dashboard-content">

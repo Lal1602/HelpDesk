@@ -4,7 +4,7 @@ import NotificationDropdown from './NotificationDropdown';
 import AccountDropdown from './AccountDropdown';
 import '../styles/Navbar.css'; // Pastikan file ini tidak menimpa gaya dashboard-header
 
-export default function Navbar({ pageTitle, date }) {
+export default function Navbar({ pageTitle, user, onLogout }) {
     const location = useLocation();
     const [showNotifications, setShowNotifications] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
@@ -28,7 +28,6 @@ export default function Navbar({ pageTitle, date }) {
     const currentRoute = routeConfig[location.pathname] || routeConfig['/dashboard'];
 
     // Mock data user (nantinya bisa diambil dari backend/auth)
-    const user = { email: 'rohman@studio.com' };
 
     return (
         <header className="dashboard-header">
@@ -75,6 +74,7 @@ export default function Navbar({ pageTitle, date }) {
                         isOpen={showAccount} 
                         onClose={() => setShowAccount(false)} 
                         user={user}
+                        onLogout={onLogout}
                     />
                 </div>
             </div>
