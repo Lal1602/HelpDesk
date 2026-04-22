@@ -4,9 +4,9 @@ import '../styles/ReportModal.css';
 export default function ReportModal({ isOpen, onClose }) {
     // State dideklarasikan di sini
     const [judul, setJudul] = useState('');
-    const [kategori, setKategori] = useState('Software');
-    const [prioritas, setPrioritas] = useState('Rendah');
-    const [proyek, setProyek] = useState('Film Animasi "Ocean Blue"');
+    const [kategori, setKategori] = useState('');
+    const [prioritas, setPrioritas] = useState('');
+    const [proyek, setProyek] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -43,9 +43,9 @@ export default function ReportModal({ isOpen, onClose }) {
 
                 // PERBAIKAN 2: Reset state satu per satu menggunakan fungsi set yang benar
                 setJudul('');
-                setKategori('Software');
-                setPrioritas('Rendah');
-                setProyek('Film Animasi "Ocean Blue"');
+                setKategori('');
+                setPrioritas('');
+                setProyek('');
                 setDeskripsi('');
 
                 onClose(); // Tutup modal setelah sukses

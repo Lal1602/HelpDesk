@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TicketController; 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-use App\Http\Controllers\TicketController; // Panggil controller yang baru dibuat
+Route::post('/login', [AuthController::class, 'login']);
 
 // URL untuk mengambil daftar tiket (GET http://localhost:8000/api/tickets)
 Route::get('/tickets', [TicketController::class, 'index']);
 
 // URL untuk mengirim/membuat tiket baru (POST http://localhost:8000/api/tickets)
 Route::post('/tickets', [TicketController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    
+    // CRUD User
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+});
+

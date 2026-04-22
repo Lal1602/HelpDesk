@@ -3,28 +3,52 @@ import { useState } from "react";
 export default function LoginPage({ onLogin }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    // State baru untuk loading dan error
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [btnHover, setBtnHover] = useState(false);
     const [googleHover, setGoogleHover] = useState(false);
     const [msHover, setMsHover] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Data dummy untuk keperluan testing
-        const dummyUsers = [
-            { email: "admin@gmail.com", password: "admin123", role: "admin" },
-            { email: "user@gmail.com", password: "user123", role: "user" }
-        ];
 
-        const user = dummyUsers.find(u => u.email === email && u.password === password);
+        // Reset error dan mulai loading
+        setErrorMessage("");
+        setIsLoading(true);
 
-        if (user) {
-            console.log("Login Success:", user);
-            onLogin(user);
-        } else {
-            alert("Email atau password salah! \n\nHint:\nAdmin: admin@gmail.com / admin123\nUser: user@gmail.com / user123");
+        try {
+            // Mengirim request ke API Laravel
+            const response = await fetch('http://127.0.0.1:8000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                // 1. Simpan Token Keamanan di Local Storage browser
+                localStorage.setItem('auth_token', result.token);
+
+                // 2. Kirim data user ke App.jsx untuk mengubah halaman
+                onLogin(result.data);
+            } else {
+                // Tampilkan pesan error dari Laravel (misal: "Email atau password salah")
+                setErrorMessage(result.message || "Gagal melakukan login.");
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+            setErrorMessage("Tidak dapat terhubung ke server backend.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -65,54 +89,68 @@ export default function LoginPage({ onLogin }) {
                             Silahkan masukkan akun studio untuk melanjutkan
                         </p>
 
-                        <div style={styles.fieldGroup}>
-                            <div style={styles.fieldLabelRow}>
-                                <label style={styles.fieldLabel}>Alamat Email</label>
+                        {/* Menampilkan pesan error jika ada */}
+                        {errorMessage && (
+                            <div style={styles.errorBox}>
+                                {errorMessage}
                             </div>
-                            <input
-                                type="email"
-                                placeholder="example@gmail.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                onFocus={() => setEmailFocused(true)}
-                                onBlur={() => setEmailFocused(false)}
-                                style={{
-                                    ...styles.input,
-                                    ...(emailFocused ? styles.inputFocus : {}),
-                                }}
-                            />
-                        </div>
+                        )}
 
-                        <div style={styles.fieldGroup}>
-                            <div style={styles.fieldLabelRow}>
-                                <label style={styles.fieldLabel}>Password</label>
-                                <a href="#" style={styles.forgotLink}>Lupa Password?</a>
+                        <form onSubmit={handleSubmit}>
+                            <div style={styles.fieldGroup}>
+                                <div style={styles.fieldLabelRow}>
+                                    <label style={styles.fieldLabel}>Alamat Email</label>
+                                </div>
+                                <input
+                                    type="email"
+                                    required
+                                    placeholder="example@studio.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onFocus={() => setEmailFocused(true)}
+                                    onBlur={() => setEmailFocused(false)}
+                                    style={{
+                                        ...styles.input,
+                                        ...(emailFocused ? styles.inputFocus : {}),
+                                    }}
+                                />
                             </div>
-                            <input
-                                type="password"
-                                placeholder="Masukkan Password..."
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                onFocus={() => setPasswordFocused(true)}
-                                onBlur={() => setPasswordFocused(false)}
-                                style={{
-                                    ...styles.input,
-                                    ...(passwordFocused ? styles.inputFocus : {}),
-                                }}
-                            />
-                        </div>
 
-                        <button
-                            onClick={handleSubmit}
-                            onMouseEnter={() => setBtnHover(true)}
-                            onMouseLeave={() => setBtnHover(false)}
-                            style={{
-                                ...styles.btnMasuk,
-                                ...(btnHover ? styles.btnMasukHover : {}),
-                            }}
-                        >
-                            Masuk
-                        </button>
+                            <div style={styles.fieldGroup}>
+                                <div style={styles.fieldLabelRow}>
+                                    <label style={styles.fieldLabel}>Password</label>
+                                    <a href="#" style={styles.forgotLink}>Lupa Password?</a>
+                                </div>
+                                <input
+                                    type="password"
+                                    required
+                                    placeholder="Masukkan Password..."
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onFocus={() => setPasswordFocused(true)}
+                                    onBlur={() => setPasswordFocused(false)}
+                                    style={{
+                                        ...styles.input,
+                                        ...(passwordFocused ? styles.inputFocus : {}),
+                                    }}
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                onMouseEnter={() => setBtnHover(true)}
+                                onMouseLeave={() => setBtnHover(false)}
+                                style={{
+                                    ...styles.btnMasuk,
+                                    ...(btnHover && !isLoading ? styles.btnMasukHover : {}),
+                                    opacity: isLoading ? 0.7 : 1,
+                                    cursor: isLoading ? 'not-allowed' : 'pointer'
+                                }}
+                            >
+                                {isLoading ? "Memproses..." : "Masuk"}
+                            </button>
+                        </form>
 
                         <div style={styles.dividerRow}>
                             <div style={styles.dividerLine} />
@@ -122,6 +160,7 @@ export default function LoginPage({ onLogin }) {
 
                         <div style={styles.socialRow}>
                             <button
+                                type="button"
                                 onMouseEnter={() => setGoogleHover(true)}
                                 onMouseLeave={() => setGoogleHover(false)}
                                 style={{
@@ -133,6 +172,7 @@ export default function LoginPage({ onLogin }) {
                                 Google
                             </button>
                             <button
+                                type="button"
                                 onMouseEnter={() => setMsHover(true)}
                                 onMouseLeave={() => setMsHover(false)}
                                 style={{
@@ -179,281 +219,45 @@ const MicrosoftIcon = () => (
 );
 
 const styles = {
-    // ── Root & Layout ──────────────────────────────────────────────
-    page: {
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#f0f2f4",
-        fontFamily: "'Segoe UI', 'Inter', sans-serif",
-    },
-    wrapper: {
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "40px 20px",
-    },
-    card: {
-        display: "flex",
-        width: "100%",
-        maxWidth: "900px",
-        minHeight: "560px",
-        borderRadius: "20px",
-        overflow: "hidden",
-        boxShadow: "0 8px 40px rgba(0,0,0,0.12)",
-    },
+    // ... [Semua styles Anda sebelumnya tetap di sini, ditambah satu style baru di bawah] ...
+    page: { minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "#f0f2f4", fontFamily: "'Segoe UI', 'Inter', sans-serif", },
+    wrapper: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 20px", },
+    card: { display: "flex", width: "100%", maxWidth: "900px", minHeight: "560px", borderRadius: "20px", overflow: "hidden", boxShadow: "0 8px 40px rgba(0,0,0,0.12)", },
+    leftPanel: { flex: "0 0 42%", background: "linear-gradient(145deg, #0d9e8a 0%, #0b8a78 60%, #0a7a6a 100%)", padding: "36px 32px 32px 32px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden", },
+    brandRow: { display: "flex", alignItems: "center", gap: "0px", },
+    brandName: { fontSize: "15px", fontWeight: "700", color: "#ffffff", letterSpacing: "0.01em", },
+    brandAccent: { fontSize: "15px", fontWeight: "700", color: "#5ef5d8", letterSpacing: "0.01em", },
+    heroText: { fontSize: "36px", fontWeight: "800", color: "#ffffff", lineHeight: "1.2", marginTop: "20px", letterSpacing: "-0.5px", },
+    illustrationWrapper: { marginTop: "auto", display: "flex", justifyContent: "center", alignItems: "flex-end", },
+    browserMock: { width: "100%", maxWidth: "280px", backgroundColor: "rgba(255,255,255,0.95)", borderRadius: "12px", overflow: "hidden", boxShadow: "0 12px 32px rgba(0,0,0,0.15)", },
+    browserBar: { backgroundColor: "#ffffff", padding: "10px 14px", display: "flex", alignItems: "center", gap: "6px", borderBottom: "1px solid #e8eaed", },
+    browserDot: (color) => ({ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: color, }),
+    browserContent: { height: "160px", background: "linear-gradient(160deg, #c8ede6 0%, #a8ddd4 40%, #d4ede8 100%)", position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", },
+    browserBlob1: { position: "absolute", width: "90px", height: "60px", background: "rgba(13,158,138,0.2)", borderRadius: "50%", bottom: "20px", left: "20px", transform: "rotate(-20deg)", },
+    browserBlob2: { position: "absolute", width: "60px", height: "40px", background: "rgba(13,158,138,0.15)", borderRadius: "50%", bottom: "10px", right: "30px", },
+    browserCircle: { width: "60px", height: "60px", borderRadius: "50%", backgroundColor: "rgba(13,158,138,0.18)", position: "absolute", top: "30px", left: "50%", transform: "translateX(-50%)", },
+    rightPanel: { flex: 1, backgroundColor: "#ffffff", padding: "52px 52px 40px 52px", display: "flex", flexDirection: "column", justifyContent: "center", },
+    welcomeTitle: { fontSize: "30px", fontWeight: "800", color: "#111827", marginBottom: "8px", letterSpacing: "-0.5px", },
+    welcomeSubtitle: { fontSize: "14px", color: "#6b7280", marginBottom: "24px", }, // Kurangi sedikit margin bottom
 
-    // ── Left Panel ─────────────────────────────────────────────────
-    leftPanel: {
-        flex: "0 0 42%",
-        background: "linear-gradient(145deg, #0d9e8a 0%, #0b8a78 60%, #0a7a6a 100%)",
-        padding: "36px 32px 32px 32px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        position: "relative",
-        overflow: "hidden",
-    },
-    brandRow: {
-        display: "flex",
-        alignItems: "center",
-        gap: "0px",
-    },
-    brandName: {
-        fontSize: "15px",
-        fontWeight: "700",
-        color: "#ffffff",
-        letterSpacing: "0.01em",
-    },
-    brandAccent: {
-        fontSize: "15px",
-        fontWeight: "700",
-        color: "#5ef5d8",
-        letterSpacing: "0.01em",
-    },
-    heroText: {
-        fontSize: "36px",
-        fontWeight: "800",
-        color: "#ffffff",
-        lineHeight: "1.2",
-        marginTop: "20px",
-        letterSpacing: "-0.5px",
-    },
-    illustrationWrapper: {
-        marginTop: "auto",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-end",
-    },
-    browserMock: {
-        width: "100%",
-        maxWidth: "280px",
-        backgroundColor: "rgba(255,255,255,0.95)",
-        borderRadius: "12px",
-        overflow: "hidden",
-        boxShadow: "0 12px 32px rgba(0,0,0,0.15)",
-    },
-    browserBar: {
-        backgroundColor: "#ffffff",
-        padding: "10px 14px",
-        display: "flex",
-        alignItems: "center",
-        gap: "6px",
-        borderBottom: "1px solid #e8eaed",
-    },
-    browserDot: (color) => ({
-        width: "10px",
-        height: "10px",
-        borderRadius: "50%",
-        backgroundColor: color,
-    }),
-    browserContent: {
-        height: "160px",
-        background: "linear-gradient(160deg, #c8ede6 0%, #a8ddd4 40%, #d4ede8 100%)",
-        position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    browserBlob1: {
-        position: "absolute",
-        width: "90px",
-        height: "60px",
-        background: "rgba(13,158,138,0.2)",
-        borderRadius: "50%",
-        bottom: "20px",
-        left: "20px",
-        transform: "rotate(-20deg)",
-    },
-    browserBlob2: {
-        position: "absolute",
-        width: "60px",
-        height: "40px",
-        background: "rgba(13,158,138,0.15)",
-        borderRadius: "50%",
-        bottom: "10px",
-        right: "30px",
-    },
-    browserCircle: {
-        width: "60px",
-        height: "60px",
-        borderRadius: "50%",
-        backgroundColor: "rgba(13,158,138,0.18)",
-        position: "absolute",
-        top: "30px",
-        left: "50%",
-        transform: "translateX(-50%)",
-    },
+    // Style baru untuk pesan error
+    errorBox: { backgroundColor: "#fee2e2", color: "#b91c1c", padding: "12px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "500", marginBottom: "20px", border: "1px solid #f87171" },
 
-    // ── Right Panel ────────────────────────────────────────────────
-    rightPanel: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-        padding: "52px 52px 40px 52px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-    },
-    welcomeTitle: {
-        fontSize: "30px",
-        fontWeight: "800",
-        color: "#111827",
-        marginBottom: "8px",
-        letterSpacing: "-0.5px",
-    },
-    welcomeSubtitle: {
-        fontSize: "14px",
-        color: "#6b7280",
-        marginBottom: "32px",
-    },
-
-    // ── Form ───────────────────────────────────────────────────────
-    fieldGroup: {
-        marginBottom: "20px",
-    },
-    fieldLabelRow: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "8px",
-    },
-    fieldLabel: {
-        fontSize: "11px",
-        fontWeight: "700",
-        color: "#374151",
-        letterSpacing: "0.08em",
-        textTransform: "uppercase",
-    },
-    forgotLink: {
-        fontSize: "13px",
-        fontWeight: "600",
-        color: "#0d9e8a",
-        textDecoration: "none",
-        cursor: "pointer",
-    },
-    input: {
-        width: "100%",
-        padding: "14px 18px",
-        fontSize: "14px",
-        color: "#374151",
-        backgroundColor: "#ffffff",
-        border: "1.5px solid #e5e7eb",
-        borderRadius: "12px",
-        outline: "none",
-        boxSizing: "border-box",
-        transition: "border-color 0.2s",
-    },
-    inputFocus: {
-        borderColor: "#0d9e8a",
-        boxShadow: "0 0 0 3px rgba(13,158,138,0.1)",
-    },
-
-    // ── Primary Button ─────────────────────────────────────────────
-    btnMasuk: {
-        width: "100%",
-        padding: "15px",
-        fontSize: "16px",
-        fontWeight: "700",
-        color: "#ffffff",
-        backgroundColor: "#0d9e8a",
-        border: "none",
-        borderRadius: "12px",
-        cursor: "pointer",
-        transition: "background-color 0.2s, transform 0.1s",
-        marginTop: "4px",
-        letterSpacing: "0.02em",
-    },
-    btnMasukHover: {
-        backgroundColor: "#0b8a78",
-    },
-
-    // ── Divider ────────────────────────────────────────────────────
-    dividerRow: {
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        margin: "22px 0 18px",
-    },
-    dividerLine: {
-        flex: 1,
-        height: "1px",
-        backgroundColor: "#e5e7eb",
-    },
-    dividerText: {
-        fontSize: "11px",
-        fontWeight: "700",
-        color: "#9ca3af",
-        letterSpacing: "0.1em",
-        whiteSpace: "nowrap",
-    },
-
-    // ── Social Buttons ─────────────────────────────────────────────
-    socialRow: {
-        display: "flex",
-        gap: "12px",
-    },
-    btnSocial: {
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "10px",
-        padding: "12px 16px",
-        fontSize: "14px",
-        fontWeight: "600",
-        color: "#374151",
-        backgroundColor: "#ffffff",
-        border: "1.5px solid #e5e7eb",
-        borderRadius: "12px",
-        cursor: "pointer",
-        transition: "border-color 0.2s, background-color 0.2s",
-    },
-    btnSocialHover: {
-        borderColor: "#d1d5db",
-        backgroundColor: "#f9fafb",
-    },
-
-    // ── Footer Link ────────────────────────────────────────────────
-    footerText: {
-        textAlign: "center",
-        marginTop: "24px",
-        fontSize: "13px",
-        color: "#6b7280",
-    },
-    footerLink: {
-        fontWeight: "700",
-        color: "#0d9e8a",
-        textDecoration: "none",
-        cursor: "pointer",
-    },
-
-    // ── Page Footer ────────────────────────────────────────────────
-    pageFooter: {
-        textAlign: "center",
-        padding: "16px",
-        fontSize: "12px",
-        color: "#9ca3af",
-    },
+    fieldGroup: { marginBottom: "20px", },
+    fieldLabelRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", },
+    fieldLabel: { fontSize: "11px", fontWeight: "700", color: "#374151", letterSpacing: "0.08em", textTransform: "uppercase", },
+    forgotLink: { fontSize: "13px", fontWeight: "600", color: "#0d9e8a", textDecoration: "none", cursor: "pointer", },
+    input: { width: "100%", padding: "14px 18px", fontSize: "14px", color: "#374151", backgroundColor: "#ffffff", border: "1.5px solid #e5e7eb", borderRadius: "12px", outline: "none", boxSizing: "border-box", transition: "border-color 0.2s", },
+    inputFocus: { borderColor: "#0d9e8a", boxShadow: "0 0 0 3px rgba(13,158,138,0.1)", },
+    btnMasuk: { width: "100%", padding: "15px", fontSize: "16px", fontWeight: "700", color: "#ffffff", backgroundColor: "#0d9e8a", border: "none", borderRadius: "12px", transition: "background-color 0.2s, transform 0.1s", marginTop: "4px", letterSpacing: "0.02em", },
+    btnMasukHover: { backgroundColor: "#0b8a78", },
+    dividerRow: { display: "flex", alignItems: "center", gap: "12px", margin: "22px 0 18px", },
+    dividerLine: { flex: 1, height: "1px", backgroundColor: "#e5e7eb", },
+    dividerText: { fontSize: "11px", fontWeight: "700", color: "#9ca3af", letterSpacing: "0.1em", whiteSpace: "nowrap", },
+    socialRow: { display: "flex", gap: "12px", },
+    btnSocial: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", padding: "12px 16px", fontSize: "14px", fontWeight: "600", color: "#374151", backgroundColor: "#ffffff", border: "1.5px solid #e5e7eb", borderRadius: "12px", cursor: "pointer", transition: "border-color 0.2s, background-color 0.2s", },
+    btnSocialHover: { borderColor: "#d1d5db", backgroundColor: "#f9fafb", },
+    footerText: { textAlign: "center", marginTop: "24px", fontSize: "13px", color: "#6b7280", },
+    footerLink: { fontWeight: "700", color: "#0d9e8a", textDecoration: "none", cursor: "pointer", },
+    pageFooter: { textAlign: "center", padding: "16px", fontSize: "12px", color: "#9ca3af", },
 };
