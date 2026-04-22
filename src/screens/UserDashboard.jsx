@@ -1,53 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';  
 import ReportModal from '../components/ReportModal';
 import NotificationDropdown from '../components/NotificationDropdown';
 import TicketSummary from '../components/TicketSummary';
 import AccountDropdown from '../components/AccountDropdown';
 import '../styles/UserDashboard.css';
 
-const tickets = [
-    {
-        id: 'TK-101',
-        title: 'Node Render Farm 04 & 07 Offline',
-        time: '2 jam lalu',
-        status: 'In Progress',
-        statusColor: '#e67e22',
-        borderColor: '#e74c3c',
-    },
-    {
-        id: 'TK-102',
-        title: 'Update Plugin Redshift 3.5 di Semua Workstation',
-        time: '5 jam lalu',
-        status: 'Pending',
-        statusColor: '#f39c12',
-        borderColor: '#f39c12',
-    },
-    {
-        id: 'TK-103',
-        title: 'Kalibrasi Warna Monitor Cintiq 24 Pro',
-        time: '1 hari lalu',
-        status: 'Resolved',
-        statusColor: '#27ae60',
-        borderColor: '#27ae60',
-    },
-    {
-        id: 'TK-104',
-        title: 'Error Sinkronisasi Shotgrid / Asset Library',
-        time: '3 jam lalu',
-        status: 'In Progress',
-        statusColor: '#e67e22',
-        borderColor: '#3498db',
-    },
-    {
-        id: 'TK-105',
-        title: 'License Arnold Renderer Kadaluarsa',
-        time: '30 mnt lalu',
-        status: 'Pending',
-        statusColor: '#f39c12',
-        borderColor: '#e74c3c',
-    },
-];
+// 1. Hapus variabel dummy 'tickets' yang lama
 
 const renderFarmNodes = [
     { id: '01', status: 'Rendering', color: '#0d9e8a' },
@@ -69,89 +29,63 @@ function getStatusBadgeClass(status) {
     }
 }
 
+// Tambahan fungsi untuk menentukan warna aksen garis di sebelah kiri tiket
+function getStatusBorderColor(status) {
+    switch (status) {
+        case 'In Progress': return '#3498db'; // Biru
+        case 'Pending': return '#f39c12'; // Oranye
+        case 'Resolved': return '#27ae60'; // Hijau
+        default: return '#bdc3c7'; // Abu-abu
+    }
+}
+
 export default function UserDashboard({ user, onLogout }) {
     const [showReport, setShowReport] = useState(false);
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    
+    // State yang tidak terpakai di komponen ini (karena dipindah ke Navbar) 
+    // tetap saya biarkan agar tidak memicu error jika Anda masih menghubungkannya
     const [showNotifications, setShowNotifications] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
-    const [selectedTicket, setSelectedTicket] = useState(null);
 
-    // Close all dropdowns
+    // 2. State untuk menampung data dari database
+    const [tickets, setTickets] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // 3. Menarik data saat halaman dimuat
+    useEffect(() => {
+        fetchTickets();
+    }, []);
+
+    const fetchTickets = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/tickets');
+            const result = await response.json();
+
+            if (response.ok) {
+                setTickets(result.data);
+            } else {
+                console.error('Gagal mengambil data tiket');
+            }
+        } catch (error) {
+            console.error('Kesalahan koneksi ke backend:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const closeAll = () => {
         setShowNotifications(false);
         setShowAccount(false);
     };
 
-    const handleNotifClick = () => {
-        setShowAccount(false);
-        setShowNotifications(!showNotifications);
-    };
-
-    const handleAccountClick = () => {
-        setShowNotifications(false);
-        setShowAccount(!showAccount);
-    };
-
     return (
         <div className="dashboard-layout">
             <Sidebar />
-
+            
             <div className="dashboard-main">
-                {/* Top Header */}
-                <header className="dashboard-header">
-                    <div className="header-left">
-                        <h1 className="header-title">Dasbor Produksi</h1>
-                        <div className="breadcrumb">
-                            <span className="breadcrumb-item">Portal Studio</span>
-                            <span className="breadcrumb-separator">&gt;</span>
-                            <span className="breadcrumb-active">Dasbor</span>
-                        </div>
-                    </div>
-                    <div className="header-right" style={{ position: 'relative' }}>
-                        {/* Notification Bell */}
-                        <button
-                            className={`header-icon-btn ${showNotifications ? 'active' : ''}`}
-                            title="Notifikasi"
-                            onClick={handleNotifClick}
-                        >
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                            </svg>
-                            <span className="notif-dot"></span>
-                        </button>
-
-                        {/* Notification Dropdown */}
-                        <NotificationDropdown
-                            isOpen={showNotifications}
-                            onClose={() => setShowNotifications(false)}
-                        />
-
-                        {/* User Profile */}
-                        <div
-                            className={`user-profile ${showAccount ? 'active' : ''}`}
-                            onClick={handleAccountClick}
-                        >
-                            <div className="user-avatar">
-                                {(user?.email?.[0] || 'R').toUpperCase()}{(user?.email?.split('@')[0]?.slice(-1) || 'F').toUpperCase()}
-                            </div>
-                            <div className="user-info">
-                                <span className="user-name">{user?.email?.split('@')[0] || 'Rohman'}</span>
-                                <span className="user-role">Lead Animator</span>
-                            </div>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
-
-                        {/* Account Dropdown */}
-                        <AccountDropdown
-                            isOpen={showAccount}
-                            onClose={() => setShowAccount(false)}
-                            user={user}
-                            onLogout={onLogout}
-                        />
-                    </div>
-                </header>
+                <Navbar />
 
                 {/* Dashboard Content */}
                 <div className="dashboard-content">
@@ -167,25 +101,35 @@ export default function UserDashboard({ user, onLogout }) {
                             </div>
 
                             <div className="tickets-list">
-                                {tickets.map((ticket) => (
-                                    <div
-                                        key={ticket.id}
-                                        className="ticket-item"
-                                        onClick={() => setSelectedTicket(ticket)}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <div className="ticket-accent" style={{ backgroundColor: ticket.borderColor }}></div>
-                                        <div className="ticket-content">
-                                            <h3 className="ticket-title">{ticket.title}</h3>
-                                            <p className="ticket-meta">
-                                                {ticket.id} • {ticket.time}
-                                            </p>
+                                {/* 4. Render data secara dinamis dari state */}
+                                {isLoading ? (
+                                    <p style={{ padding: '20px', color: '#666', textAlign: 'center' }}>Memuat data tiket...</p>
+                                ) : tickets.length === 0 ? (
+                                    <p style={{ padding: '20px', color: '#666', textAlign: 'center' }}>Belum ada isu produksi yang dilaporkan.</p>
+                                ) : (
+                                    tickets.map((ticket) => (
+                                        <div
+                                            key={ticket.id}
+                                            className="ticket-item"
+                                            onClick={() => setSelectedTicket(ticket)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <div 
+                                                className="ticket-accent" 
+                                                style={{ backgroundColor: getStatusBorderColor(ticket.status) }}
+                                            ></div>
+                                            <div className="ticket-content">
+                                                <h3 className="ticket-title">{ticket.title}</h3>
+                                                <p className="ticket-meta">
+                                                    TK-{ticket.id} • {new Date(ticket.created_at).toLocaleDateString('id-ID')}
+                                                </p>
+                                            </div>
+                                            <span className={`ticket-badge ${getStatusBadgeClass(ticket.status)}`}>
+                                                {ticket.status}
+                                            </span>
                                         </div>
-                                        <span className={`ticket-badge ${getStatusBadgeClass(ticket.status)}`}>
-                                            {ticket.status}
-                                        </span>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
@@ -247,7 +191,10 @@ export default function UserDashboard({ user, onLogout }) {
             {/* Report Modal */}
             <ReportModal
                 isOpen={showReport}
-                onClose={() => setShowReport(false)}
+                onClose={() => {
+                    setShowReport(false);
+                    fetchTickets(); // 5. Otomatis refresh data setelah lapor
+                }}
             />
 
             {/* Ticket Summary Popup */}

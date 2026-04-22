@@ -2,19 +2,63 @@ import { useState } from 'react';
 import '../styles/ReportModal.css';
 
 export default function ReportModal({ isOpen, onClose }) {
+    // State dideklarasikan di sini
     const [judul, setJudul] = useState('');
     const [kategori, setKategori] = useState('Software');
     const [prioritas, setPrioritas] = useState('Rendah');
     const [proyek, setProyek] = useState('Film Animasi "Ocean Blue"');
     const [deskripsi, setDeskripsi] = useState('');
+    const [loading, setLoading] = useState(false);
 
     if (!isOpen) return null;
 
-    const handleSubmit = () => {
-        alert('Tiket berhasil dikirim!');
-        setJudul('');
-        setDeskripsi('');
-        onClose();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true); // Mulai loading
+
+        // PERBAIKAN 1: Gunakan state yang benar (judul, kategori, dll), BUKAN formData
+        const newTicket = {
+            user_id: 1,
+            title: judul,
+            category: kategori,
+            priority: prioritas,
+            project_affected: proyek,
+            description: deskripsi
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/tickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newTicket)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Laporan berhasil dikirim!');
+
+                // PERBAIKAN 2: Reset state satu per satu menggunakan fungsi set yang benar
+                setJudul('');
+                setKategori('Software');
+                setPrioritas('Rendah');
+                setProyek('Film Animasi "Ocean Blue"');
+                setDeskripsi('');
+
+                onClose(); // Tutup modal setelah sukses
+            } else {
+                console.error('Detail Error:', data);
+                alert('Gagal: ' + (data.message || 'Cek kembali isian Anda'));
+            }
+        } catch (error) {
+            console.error('Koneksi Gagal:', error);
+            alert('Tidak dapat terhubung ke server backend.');
+        } finally {
+            setLoading(false); // Selesai loading
+        }
     };
 
     return (
@@ -132,8 +176,11 @@ export default function ReportModal({ isOpen, onClose }) {
 
                 {/* Footer */}
                 <div className="modal-footer">
-                    <button className="btn-cancel" onClick={onClose}>Batal</button>
-                    <button className="btn-submit" onClick={handleSubmit}>Kirim Tiket</button>
+                    {/* PERBAIKAN 3: Tambahkan disable saat loading agar tidak di-klik 2 kali */}
+                    <button className="btn-cancel" onClick={onClose} disabled={loading}>Batal</button>
+                    <button className="btn-submit" onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Mengirim...' : 'Kirim Tiket'}
+                    </button>
                 </div>
             </div>
         </div>
