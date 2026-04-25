@@ -1,27 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import NotificationDropdown from '../components/NotificationDropdown';
-import AccountDropdown from '../components/AccountDropdown';
-import { useState } from 'react';
+import PageHeader from '../components/PageHeader';
 import '../styles/ProfilePage.css';
 
 export default function ProfilePage({ user, onLogout }) {
     const navigate = useNavigate();
-    const [showNotifications, setShowNotifications] = useState(false);
-    const [showAccount, setShowAccount] = useState(false);
-
-    const handleNotifClick = () => {
-        setShowAccount(false);
-        setShowNotifications(!showNotifications);
-    };
-
-    const handleAccountClick = () => {
-        setShowNotifications(false);
-        setShowAccount(!showAccount);
-    };
 
     const userName = user?.email?.split('@')[0] || 'Rohman';
-    const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
     const initials = (user?.email?.[0] || 'R').toUpperCase() + (user?.email?.split('@')[0]?.slice(-1) || 'F').toUpperCase();
 
     return (
@@ -29,58 +14,13 @@ export default function ProfilePage({ user, onLogout }) {
             <Sidebar />
 
             <div className="dashboard-main">
-                {/* Top Header */}
-                <header className="dashboard-header">
-                    <div className="header-left">
-                        <h1 className="header-title">Dasbor Produksi</h1>
-                        <div className="breadcrumb">
-                            <span className="breadcrumb-item">Portal Studio</span>
-                            <span className="breadcrumb-separator">&gt;</span>
-                            <span className="breadcrumb-active">Profil</span>
-                        </div>
-                    </div>
-                    <div className="header-right" style={{ position: 'relative' }}>
-                        <button
-                            className={`header-icon-btn ${showNotifications ? 'active' : ''}`}
-                            title="Notifikasi"
-                            onClick={handleNotifClick}
-                        >
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                            </svg>
-                            <span className="notif-dot"></span>
-                        </button>
-
-                        <NotificationDropdown
-                            isOpen={showNotifications}
-                            onClose={() => setShowNotifications(false)}
-                        />
-
-                        <div
-                            className={`user-profile ${showAccount ? 'active' : ''}`}
-                            onClick={handleAccountClick}
-                        >
-                            <div className="user-avatar">
-                                {initials}
-                            </div>
-                            <div className="user-info">
-                                <span className="user-name">{displayName}</span>
-                                <span className="user-role">Lead Animator</span>
-                            </div>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
-
-                        <AccountDropdown
-                            isOpen={showAccount}
-                            onClose={() => setShowAccount(false)}
-                            user={user}
-                            onLogout={onLogout}
-                        />
-                    </div>
-                </header>
+                {/* ── Reusable Header ── */}
+                <PageHeader
+                    title="Profil Saya"
+                    breadcrumb="Profil"
+                    user={user}
+                    onLogout={onLogout}
+                />
 
                 {/* Profile Content */}
                 <div className="profile-content">

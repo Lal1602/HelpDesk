@@ -42,7 +42,7 @@ function AppContent() {
       />
       <Route
         path="/tiket-produksi"
-        element={<TiketProduksi />}
+        element={<TiketProduksi user={user} onLogout={() => { setUser(null); navigate('/'); }} />}
       />
       <Route
         path="/profile"
