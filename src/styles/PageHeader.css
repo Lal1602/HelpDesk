@@ -56,6 +56,17 @@
     font-weight: 600;
 }
 
+.ph-breadcrumb-link {
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.ph-breadcrumb-link:hover {
+    color: #0d9e8a;
+    text-decoration: underline;
+}
+
 /* ── Right Section ───────────────────────────────────────────── */
 .page-header-right {
     display: flex;

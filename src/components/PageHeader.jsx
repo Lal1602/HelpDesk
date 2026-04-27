@@ -7,15 +7,19 @@ import '../styles/PageHeader.css';
  * PageHeader — Reusable header component
  *
  * Props:
- *  - title       : string  — Judul halaman (e.g. "Dasbor Produksi")
- *  - breadcrumb  : string  — Teks breadcrumb aktif (e.g. "Dasbor")
- *  - user        : object  — { email } dari state App
- *  - onLogout    : fn      — Callback logout dari state App
+ *  - title            : string  — Judul halaman (e.g. "Dasbor Produksi")
+ *  - breadcrumb       : string  — Teks breadcrumb level-1 (e.g. "Proyek")
+ *  - breadcrumbSub    : string  — (optional) Teks breadcrumb level-2 aktif
+ *  - onBreadcrumbClick: fn      — (optional) Klik pada breadcrumb level-1
+ *  - user             : object  — { email } dari state App
+ *  - onLogout         : fn      — Callback logout dari state App
  *
  * Usage:
- *  <PageHeader title="Tiket Produksi" breadcrumb="Tiket" user={user} onLogout={onLogout} />
+ *  <PageHeader title="Proyek & Pipeline" breadcrumb="Proyek" user={user} onLogout={onLogout} />
+ *  <PageHeader title="Proyek & Pipeline" breadcrumb="Proyek" breadcrumbSub="Brand X"
+ *              onBreadcrumbClick={() => navigate('/proyek')} user={user} onLogout={onLogout} />
  */
-export default function PageHeader({ title, breadcrumb, user, onLogout }) {
+export default function PageHeader({ title, breadcrumb, breadcrumbSub, onBreadcrumbClick, user, onLogout }) {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
 
@@ -44,7 +48,23 @@ export default function PageHeader({ title, breadcrumb, user, onLogout }) {
                 <div className="page-header-breadcrumb">
                     <span className="ph-breadcrumb-item">Portal Studio</span>
                     <span className="ph-breadcrumb-sep">›</span>
-                    <span className="ph-breadcrumb-active">{breadcrumb}</span>
+                    {breadcrumbSub ? (
+                        <>
+                            <span
+                                className="ph-breadcrumb-item ph-breadcrumb-link"
+                                onClick={onBreadcrumbClick}
+                                role={onBreadcrumbClick ? 'button' : undefined}
+                                tabIndex={onBreadcrumbClick ? 0 : undefined}
+                                onKeyDown={e => e.key === 'Enter' && onBreadcrumbClick?.()}
+                            >
+                                {breadcrumb}
+                            </span>
+                            <span className="ph-breadcrumb-sep">›</span>
+                            <span className="ph-breadcrumb-active">{breadcrumbSub}</span>
+                        </>
+                    ) : (
+                        <span className="ph-breadcrumb-active">{breadcrumb}</span>
+                    )}
                 </div>
             </div>
 

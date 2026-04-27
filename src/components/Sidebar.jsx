@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSidebar } from '../contexts/SidebarContext';
 import '../styles/Sidebar.css';
 
 const menuItems = [
@@ -71,11 +72,12 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const location   = useLocation();
+    const navigate   = useNavigate();
+    const { collapsed, toggle } = useSidebar();
 
     return (
-        <aside className="sidebar">
+        <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}>
             <div className="sidebar-top">
                 {/* Brand Logo */}
                 <div className="sidebar-brand">
@@ -92,6 +94,7 @@ export default function Sidebar() {
                                 key={item.path}
                                 className={`nav-item ${isActive ? 'active' : ''}`}
                                 onClick={() => navigate(item.path)}
+                                title={collapsed ? item.label : undefined}
                             >
                                 <span className="nav-icon">{item.icon}</span>
                                 <span className="nav-label">{item.label}</span>
@@ -103,14 +106,23 @@ export default function Sidebar() {
 
             {/* Bottom Section */}
             <div className="sidebar-bottom">
-                <button className="nav-item reduce-btn">
+                <button className="nav-item reduce-btn" onClick={toggle} title={collapsed ? 'Expand sidebar' : 'Reduce sidebar'}>
                     <span className="nav-icon">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <path d="M9 3v18" />
-                        </svg>
+                        {collapsed ? (
+                            /* Expand icon — chevron kanan */
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <path d="M15 3v18" />
+                            </svg>
+                        ) : (
+                            /* Collapse icon — panel kiri */
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <path d="M9 3v18" />
+                            </svg>
+                        )}
                     </span>
-                    <span className="nav-label">Reduce</span>
+                    <span className="nav-label">{collapsed ? 'Expand' : 'Reduce'}</span>
                 </button>
             </div>
         </aside>
