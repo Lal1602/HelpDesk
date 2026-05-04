@@ -1,30 +1,74 @@
-import { useState } from "react";
+import axios from "axios";
+import { useRef, useState } from "react";
 
 export default function LoginPage({ onLogin }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [btnHover, setBtnHover] = useState(false);
     const [googleHover, setGoogleHover] = useState(false);
     const [msHover, setMsHover] = useState(false);
+    const passwordInputRef = useRef(null);
 
-    const handleSubmit = (e) => {
+    const browserHost = typeof window !== "undefined" ? window.location.hostname : "127.0.0.1";
+    const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || `http://${browserHost}:8000`).replace(/\/$/, "");
+    const api = axios.create({
+        baseURL: API_BASE_URL,
+        withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "XSRF-TOKEN",
+        xsrfHeaderName: "X-XSRF-TOKEN",
+    });
+
+    const ensureCsrfCookie = async () => {
+        const csrfResponse = await api.get("/sanctum/csrf-cookie");
+
+        if (csrfResponse.status < 200 || csrfResponse.status >= 300) {
+            throw new Error("Gagal mengambil CSRF cookie.");
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Data dummy untuk keperluan testing
-        const dummyUsers = [
-            { email: "admin@gmail.com", password: "admin123", role: "admin" },
-            { email: "user@gmail.com", password: "user123", role: "user" }
-        ];
 
-        const user = dummyUsers.find(u => u.email === email && u.password === password);
+        const trimmedEmail = email.trim();
+        if (!trimmedEmail || !password) {
+            setErrorMessage("Email dan password wajib diisi.");
+            return;
+        }
 
-        if (user) {
-            console.log("Login Success:", user);
-            onLogin(user);
-        } else {
-            alert("Email atau password salah! \n\nHint:\nAdmin: admin@gmail.com / admin123\nUser: user@gmail.com / user123");
+        setErrorMessage("");
+        setIsLoading(true);
+
+        try {
+            await ensureCsrfCookie();
+
+            const { data } = await api.post("/api/login", {
+                email: trimmedEmail,
+                password,
+            });
+
+            const authenticatedUser = data.user || data;
+            if (!authenticatedUser?.role) {
+                setErrorMessage("Role user tidak ditemukan dari API Laravel.");
+                return;
+            }
+
+            onLogin(authenticatedUser);
+        } catch (error) {
+            setErrorMessage(error?.response?.data?.message || error?.message || "Tidak dapat terhubung ke server Laravel.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleEmailKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            passwordInputRef.current?.focus();
         }
     };
 
@@ -39,7 +83,9 @@ export default function LoginPage({ onLogin }) {
                                 <span style={styles.brandAccent}>Helpdesk+</span>
                             </div>
                             <h1 style={styles.heroText}>
-                                Kembali ke<br />Ruang Kreatif.
+                                Kembali ke
+                                <br />
+                                Ruang Kreatif.
                             </h1>
                         </div>
 
@@ -59,7 +105,7 @@ export default function LoginPage({ onLogin }) {
                         </div>
                     </div>
 
-                    <div style={styles.rightPanel}>
+                    <form style={styles.rightPanel} onSubmit={handleSubmit}>
                         <h2 style={styles.welcomeTitle}>Selamat Datang</h2>
                         <p style={styles.welcomeSubtitle}>
                             Silahkan masukkan akun studio untuk melanjutkan
@@ -74,6 +120,7 @@ export default function LoginPage({ onLogin }) {
                                 placeholder="example@gmail.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                onKeyDown={handleEmailKeyDown}
                                 onFocus={() => setEmailFocused(true)}
                                 onBlur={() => setEmailFocused(false)}
                                 style={{
@@ -89,6 +136,7 @@ export default function LoginPage({ onLogin }) {
                                 <a href="#" style={styles.forgotLink}>Lupa Password?</a>
                             </div>
                             <input
+                                ref={passwordInputRef}
                                 type="password"
                                 placeholder="Masukkan Password..."
                                 value={password}
@@ -102,16 +150,20 @@ export default function LoginPage({ onLogin }) {
                             />
                         </div>
 
+                        {errorMessage && <p style={styles.errorText}>{errorMessage}</p>}
+
                         <button
-                            onClick={handleSubmit}
+                            type="submit"
+                            disabled={isLoading}
                             onMouseEnter={() => setBtnHover(true)}
                             onMouseLeave={() => setBtnHover(false)}
                             style={{
                                 ...styles.btnMasuk,
                                 ...(btnHover ? styles.btnMasukHover : {}),
+                                ...(isLoading ? styles.btnMasukDisabled : {}),
                             }}
                         >
-                            Masuk
+                            {isLoading ? "Memproses..." : "Masuk"}
                         </button>
 
                         <div style={styles.dividerRow}>
@@ -122,6 +174,7 @@ export default function LoginPage({ onLogin }) {
 
                         <div style={styles.socialRow}>
                             <button
+                                type="button"
                                 onMouseEnter={() => setGoogleHover(true)}
                                 onMouseLeave={() => setGoogleHover(false)}
                                 style={{
@@ -133,6 +186,7 @@ export default function LoginPage({ onLogin }) {
                                 Google
                             </button>
                             <button
+                                type="button"
                                 onMouseEnter={() => setMsHover(true)}
                                 onMouseLeave={() => setMsHover(false)}
                                 style={{
@@ -149,7 +203,7 @@ export default function LoginPage({ onLogin }) {
                             Belum punya akses?{" "}
                             <a href="#" style={styles.footerLink}>Hubungi IT Pipeline</a>
                         </p>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -179,7 +233,6 @@ const MicrosoftIcon = () => (
 );
 
 const styles = {
-    // ── Root & Layout ──────────────────────────────────────────────
     page: {
         minHeight: "100vh",
         display: "flex",
@@ -203,8 +256,6 @@ const styles = {
         overflow: "hidden",
         boxShadow: "0 8px 40px rgba(0,0,0,0.12)",
     },
-
-    // ── Left Panel ─────────────────────────────────────────────────
     leftPanel: {
         flex: "0 0 42%",
         background: "linear-gradient(145deg, #0d9e8a 0%, #0b8a78 60%, #0a7a6a 100%)",
@@ -218,7 +269,6 @@ const styles = {
     brandRow: {
         display: "flex",
         alignItems: "center",
-        gap: "0px",
     },
     brandName: {
         fontSize: "15px",
@@ -306,8 +356,6 @@ const styles = {
         left: "50%",
         transform: "translateX(-50%)",
     },
-
-    // ── Right Panel ────────────────────────────────────────────────
     rightPanel: {
         flex: 1,
         backgroundColor: "#ffffff",
@@ -328,8 +376,6 @@ const styles = {
         color: "#6b7280",
         marginBottom: "32px",
     },
-
-    // ── Form ───────────────────────────────────────────────────────
     fieldGroup: {
         marginBottom: "20px",
     },
@@ -369,8 +415,13 @@ const styles = {
         borderColor: "#0d9e8a",
         boxShadow: "0 0 0 3px rgba(13,158,138,0.1)",
     },
-
-    // ── Primary Button ─────────────────────────────────────────────
+    errorText: {
+        marginTop: "4px",
+        marginBottom: "4px",
+        fontSize: "13px",
+        color: "#dc2626",
+        fontWeight: "600",
+    },
     btnMasuk: {
         width: "100%",
         padding: "15px",
@@ -381,15 +432,17 @@ const styles = {
         border: "none",
         borderRadius: "12px",
         cursor: "pointer",
-        transition: "background-color 0.2s, transform 0.1s",
+        transition: "background-color 0.2s",
         marginTop: "4px",
         letterSpacing: "0.02em",
     },
     btnMasukHover: {
         backgroundColor: "#0b8a78",
     },
-
-    // ── Divider ────────────────────────────────────────────────────
+    btnMasukDisabled: {
+        opacity: "0.75",
+        cursor: "not-allowed",
+    },
     dividerRow: {
         display: "flex",
         alignItems: "center",
@@ -408,8 +461,6 @@ const styles = {
         letterSpacing: "0.1em",
         whiteSpace: "nowrap",
     },
-
-    // ── Social Buttons ─────────────────────────────────────────────
     socialRow: {
         display: "flex",
         gap: "12px",
@@ -434,8 +485,6 @@ const styles = {
         borderColor: "#d1d5db",
         backgroundColor: "#f9fafb",
     },
-
-    // ── Footer Link ────────────────────────────────────────────────
     footerText: {
         textAlign: "center",
         marginTop: "24px",
@@ -448,8 +497,6 @@ const styles = {
         textDecoration: "none",
         cursor: "pointer",
     },
-
-    // ── Page Footer ────────────────────────────────────────────────
     pageFooter: {
         textAlign: "center",
         padding: "16px",
