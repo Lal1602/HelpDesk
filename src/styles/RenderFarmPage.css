@@ -1,0 +1,248 @@
+/* ── RenderFarmPage ─────────────────────────────────────────────
+   Design tokens (seragam):
+   Accent    : #0d9e8a
+   Dark text : #1a1a2e
+   Muted     : #9ca3af / #94a3b8
+   BG        : #f5f6fa
+   Card      : #ffffff
+   Border    : #e5e7eb / #f0f0f0
+──────────────────────────────────────────────────────────────── */
+
+/* ── Layout ──────────────────────────────────────────────────── */
+.rf-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f6fa;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.rf-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #f5f6fa;
+}
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.rf-panel {
+    padding: 24px 32px 32px;
+    flex: 1;
+}
+
+/* ── Card ────────────────────────────────────────────────────── */
+.rf-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+}
+
+/* ── Card Header ─────────────────────────────────────────────── */
+.rf-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 26px 16px;
+    border-bottom: 1px solid #f5f6fa;
+}
+
+.rf-card-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+    letter-spacing: -0.1px;
+}
+
+.rf-refresh-btn {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+}
+
+.rf-refresh-btn:hover {
+    border-color: #0d9e8a;
+    color: #0d9e8a;
+    background: #f0faf8;
+}
+
+/* Spin animation for refresh icon */
+@keyframes rf-spin-anim {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.rf-spin {
+    animation: rf-spin-anim 0.8s linear infinite;
+}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.rf-table-wrapper {
+    overflow-x: auto;
+}
+
+.rf-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.rf-table thead {
+    background: #f8fafc;
+}
+
+.rf-table th {
+    text-align: left;
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid #f0f4f8;
+    white-space: nowrap;
+}
+
+.rf-table td {
+    padding: 16px 22px;
+    border-bottom: 1px solid #f5f6fa;
+    vertical-align: middle;
+}
+
+.rf-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.rf-table tbody tr {
+    transition: background-color 0.15s;
+}
+
+.rf-table tbody tr:hover {
+    background: #f8fffe;
+}
+
+/* ── Node name ───────────────────────────────────────────────── */
+.rf-node-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    white-space: nowrap;
+}
+
+/* ── Status badges ───────────────────────────────────────────── */
+.rf-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.rf-badge--rendering {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.rf-badge--idle {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.rf-badge--offline {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.rf-badge--maintenance {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ── Job label ───────────────────────────────────────────────── */
+.rf-job {
+    font-size: 13.5px;
+    color: #374151;
+    font-weight: 400;
+}
+
+.rf-job--offline {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ── GPU Load bar ────────────────────────────────────────────── */
+.rf-gpu-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.rf-gpu-track {
+    flex: 1;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.rf-gpu-fill {
+    height: 100%;
+    border-radius: 99px;
+}
+
+.rf-gpu-pct {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+    width: 34px;
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Temperature ─────────────────────────────────────────────── */
+.rf-temp {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.rf-temp--na {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+/* ── GPU label ───────────────────────────────────────────────── */
+.rf-gpu-label {
+    font-size: 13px;
+    color: #4b5563;
+    white-space: nowrap;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .rf-panel { padding: 16px 20px 24px; }
+}
+
+@media (max-width: 768px) {
+    .rf-panel { padding: 12px; }
+    .rf-table th, .rf-table td { padding: 12px 14px; }
+}

@@ -1,0 +1,411 @@
+/* ── PusatBantuanPage ───────────────────────────────────────────
+   Design tokens (seragam):
+   Accent    : #0d9e8a
+   Dark text : #1a1a2e
+   Muted     : #9ca3af
+   BG        : #f5f6fa
+   Card      : #ffffff
+   Border    : #e5e7eb / #f0f0f0
+──────────────────────────────────────────────────────────────── */
+
+/* ── Layout ──────────────────────────────────────────────────── */
+.pb-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f6fa;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/*
+ * pb-main is the right column.
+ * height: 100vh + overflow-y: auto ensures the main content
+ * scrolls independently of the sidebar, so the sidebar never
+ * grows or shrinks with the content.
+ */
+.pb-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #f5f6fa;
+}
+
+/* ── Content wrapper ─────────────────────────────────────────── */
+.pb-content {
+    padding: 24px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* flex: 1 here lets pb-body grow to fill leftover height */
+    flex: 1;
+    /* Important: do NOT set min-height or overflow here —
+       pb-main handles scrolling at the page level.         */
+}
+
+/* ── Hero Banner ─────────────────────────────────────────────── */
+.pb-hero {
+    background: linear-gradient(135deg, #0d9e8a 0%, #0bb89e 100%);
+    border-radius: 16px;
+    padding: 32px 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pb-hero-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.pb-hero-sub {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Search bar inside hero */
+.pb-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.pb-search-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.pb-search-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 11px 16px 11px 42px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 13.5px;
+    color: #1a1a2e;
+    font-family: inherit;
+    outline: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.pb-search-input:focus {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.pb-search-input::placeholder { color: #9ca3af; }
+
+/* ── Category Cards ──────────────────────────────────────────── */
+.pb-categories {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.pb-cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 12px;
+    background: #ffffff;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.pb-cat-card:hover {
+    border-color: #0d9e8a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.pb-cat-card.active {
+    border-color: #0d9e8a;
+    background: #f0faf8;
+    box-shadow: 0 0 0 3px rgba(13, 158, 138, 0.12);
+}
+
+.pb-cat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pb-cat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a2e;
+    text-align: center;
+    line-height: 1.35;
+}
+
+/* ── Body (two columns) ───────────────────────────────────────────── */
+.pb-body {
+    display: flex;
+    gap: 20px;
+    align-items: stretch; /* kedua kolom setinggi yang lebih panjang */
+    /*
+     * min-height: 0 is crucial: without it, a flex child
+     * in a flex-column container ignores overflow and
+     * grows to fit all content, breaking the layout.
+     */
+    min-height: 0;
+}
+
+/* ── Left — Guides ───────────────────────────────────────────── */
+.pb-guides-col {
+    flex: 1;
+    min-width: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    /* Fix height so it doesn't push the sidebar */
+    max-height: 460px;
+    overflow: hidden;
+}
+
+.pb-guides-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #f5f6fa;
+    flex-shrink: 0;
+}
+
+/*
+ * The scrollable area — overflow-y: auto here, not on the card.
+ * This keeps the title fixed at the top while the list scrolls.
+ */
+.pb-guides-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.pb-guides-scroll::-webkit-scrollbar { width: 4px; }
+.pb-guides-scroll::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 99px;
+}
+
+.pb-guides-empty {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13.5px;
+    padding: 32px 24px;
+    margin: 0;
+}
+
+/* Guide row */
+.pb-guide-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 22px;
+    border-bottom: 1px solid #f5f6fa;
+    transition: background-color 0.15s;
+    cursor: pointer;
+}
+
+.pb-guide-row:last-child { border-bottom: none; }
+
+.pb-guide-row:hover { background: #f8fffe; }
+
+.pb-guide-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* Guide category tags */
+.pb-guide-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+.tag-render      { background: #dbeafe; color: #1d4ed8; }
+.tag-hardware    { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.tag-pipeline    { background: #d1fae5; color: #065f46; }
+.tag-software    { background: #ede9fe; color: #5b21b6; }
+.tag-compositing { background: #fef3c7; color: #92400e; }
+.tag-renderfarm  { background: #ccfbf1; color: #0f766e; }
+
+/* ── Right — Contact ───────────────────────────────────────────── */
+.pb-contact-col {
+    width: 280px;
+    min-width: 280px;
+    flex-shrink: 0;
+    /* Tidak lagi sticky — kolom akan setinggi kolom kiri */
+    display: flex;
+    flex-direction: column;
+}
+
+.pb-contact-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    /* Isi seluruh tinggi kolom agar batas bawah sejajar */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Contact header */
+.pb-contact-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid #f5f6fa;
+}
+
+.pb-contact-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pb-contact-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 4px;
+}
+
+.pb-contact-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* Team list */
+.pb-team-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* isi sisa tinggi kartu agar batas bawah sejajar */
+}
+
+.pb-team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f5f6fa;
+    transition: background-color 0.15s;
+}
+
+.pb-team-row:last-child { border-bottom: none; }
+.pb-team-row:hover { background: #f8fffe; }
+
+.pb-team-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+}
+
+.pb-team-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.pb-team-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a2e;
+    line-height: 1.2;
+}
+
+.pb-team-role {
+    font-size: 11.5px;
+    color: #9ca3af;
+    line-height: 1.3;
+}
+
+.pb-chat-btn {
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.18s;
+}
+
+.pb-chat-btn:hover {
+    border-color: #0d9e8a;
+    color: #0d9e8a;
+    background: #f0faf8;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .pb-content { padding: 16px 20px 24px; }
+    .pb-categories { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+    .pb-body { flex-direction: column; }
+    .pb-contact-col { width: 100%; min-width: 0; position: static; }
+    .pb-guides-col { max-height: 360px; }
+}
+
+@media (max-width: 640px) {
+    .pb-content { padding: 12px; gap: 16px; }
+    .pb-hero { padding: 22px 20px 18px; }
+    .pb-hero-title { font-size: 20px; }
+    .pb-categories { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}

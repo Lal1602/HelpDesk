@@ -1,0 +1,338 @@
+/* ── TiketProduksi Layout ───────────────────────────────────────
+   Design tokens (sama dengan UserDashboard):
+   Accent       : #0d9e8a
+   Text dark    : #1a1a2e
+   Text muted   : #9ca3af / #94a3b8
+   Background   : #f5f6fa
+   Card bg      : #ffffff
+   Border       : #e5e7eb / #eff3f6
+──────────────────────────────────────────────────────────────── */
+
+/* Layout wrapper */
+.tiket-produksi-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f6fa;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.tiket-produksi-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    background-color: #f5f6fa;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.tiket-produksi-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 32px 32px;
+    gap: 20px;
+    flex: 1;
+}
+
+/* ── Filter Toolbar ──────────────────────────────────────────── */
+.filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-pill {
+    border: 1.5px solid #e5e7eb;
+    outline: none;
+    padding: 9px 18px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #4b5563;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: inherit;
+}
+
+.filter-pill:hover {
+    border-color: #0d9e8a;
+    color: #0d9e8a;
+}
+
+.filter-pill.active {
+    background-color: #0d9e8a;
+    border-color: #0d9e8a;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.tiket-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Search */
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.search-input {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 9px 14px 9px 40px;
+    background-color: #ffffff;
+    color: #1a1a2e;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-input:focus {
+    border-color: #0d9e8a;
+    box-shadow: 0 0 0 3px rgba(13, 158, 138, 0.1);
+}
+
+/* New Ticket Button */
+.new-ticket-btn {
+    border: none;
+    outline: none;
+    background-color: #0d9e8a;
+    color: #ffffff;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(13, 158, 138, 0.22);
+    white-space: nowrap;
+}
+
+.new-ticket-btn:hover {
+    background-color: #0b8a78;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(13, 158, 138, 0.3);
+}
+
+/* ── Table Card ──────────────────────────────────────────────── */
+.tiket-table-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+}
+
+.tiket-table-wrapper {
+    overflow-x: auto;
+}
+
+.tiket-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+}
+
+.tiket-table thead {
+    background-color: #f8fafc;
+}
+
+.tiket-table th {
+    text-align: left;
+    padding: 14px 22px;
+    color: #94a3b8;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid #f0f4f8;
+    white-space: nowrap;
+}
+
+.tiket-table td {
+    padding: 18px 22px;
+    border-bottom: 1px solid #f5f6fa;
+    vertical-align: middle;
+}
+
+.tiket-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tiket-table tbody tr {
+    transition: background-color 0.15s;
+}
+
+.tiket-table tbody tr:hover {
+    background-color: #f8fffe;
+}
+
+/* Ticket cell */
+.ticket-cell-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.ticket-cell-meta {
+    font-size: 12.5px;
+    color: #9ca3af;
+    line-height: 1.4;
+}
+
+/* Category chip */
+.category-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    color: #475569;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Priority chips */
+.priority-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.priority-chip.high {
+    color: #dc2626;
+    background-color: rgba(220, 38, 38, 0.08);
+}
+
+.priority-chip.medium {
+    color: #d97706;
+    background-color: rgba(217, 119, 6, 0.09);
+}
+
+.priority-chip.low {
+    color: #16a34a;
+    background-color: rgba(22, 163, 74, 0.09);
+}
+
+.chip-icon {
+    font-size: 10px;
+}
+
+/* Status chips */
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-chip.in-progress {
+    background-color: rgba(13, 158, 138, 0.1);
+    color: #0d9e8a;
+}
+
+.status-chip.pending {
+    background-color: rgba(217, 119, 6, 0.1);
+    color: #d97706;
+}
+
+.status-chip.resolved {
+    background-color: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+}
+
+/* Due date */
+.due-text {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #4b5563;
+    white-space: nowrap;
+}
+
+.due-text.overdue {
+    color: #dc2626;
+}
+
+/* Empty state */
+.tiket-empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .tiket-produksi-panel {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tiket-produksi-panel {
+        padding: 16px;
+    }
+
+    .filter-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tiket-toolbar-right {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        flex: 1;
+    }
+
+    .new-ticket-btn {
+        width: 100%;
+    }
+}
