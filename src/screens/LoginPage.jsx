@@ -113,42 +113,6 @@ export default function LoginPage({ onLogin }) {
                         >
                             Masuk
                         </button>
-
-                        <div style={styles.dividerRow}>
-                            <div style={styles.dividerLine} />
-                            <span style={styles.dividerText}>ATAU MASUK DENGAN</span>
-                            <div style={styles.dividerLine} />
-                        </div>
-
-                        <div style={styles.socialRow}>
-                            <button
-                                onMouseEnter={() => setGoogleHover(true)}
-                                onMouseLeave={() => setGoogleHover(false)}
-                                style={{
-                                    ...styles.btnSocial,
-                                    ...(googleHover ? styles.btnSocialHover : {}),
-                                }}
-                            >
-                                <GoogleIcon />
-                                Google
-                            </button>
-                            <button
-                                onMouseEnter={() => setMsHover(true)}
-                                onMouseLeave={() => setMsHover(false)}
-                                style={{
-                                    ...styles.btnSocial,
-                                    ...(msHover ? styles.btnSocialHover : {}),
-                                }}
-                            >
-                                <MicrosoftIcon />
-                                Microsoft
-                            </button>
-                        </div>
-
-                        <p style={styles.footerText}>
-                            Belum punya akses?{" "}
-                            <a href="#" style={styles.footerLink}>Hubungi IT Pipeline</a>
-                        </p>
                     </div>
                 </div>
             </div>
